@@ -1,0 +1,210 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* BODY */
+body {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1d976c, #93f9b9);
+  display: flex;
+  flex-direction: column;
+}
+
+/* HEADER */
+header {
+  padding: 20px 40px;
+  color: white;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-text h1 {
+  font-size: 28px;
+}
+
+.header-text p {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* TOP BAR */
+.top-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.top-bar span {
+  font-weight: bold;
+  color: white;
+}
+
+.top-bar button {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: none;
+  background: white;
+  color: #1d976c;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.top-bar button:hover {
+  background: #eee;
+}
+
+/* MAIN CONTAINER */
+.container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+/* CARD */
+.card {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  width: 420px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  text-align: center;
+}
+
+/* GRID */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+/* INPUT */
+input {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+/* BUTTON */
+button {
+  width: 100%;
+  margin-top: 20px;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  background: #1d976c;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: #147a54;
+}
+
+/* RESULT */
+.result {
+  margin-top: 20px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #1d976c;
+}
+
+/* FOOTER */
+footer {
+  text-align: center;
+  padding: 10px;
+  color: white;
+}
+
+/* AUTH PAGES */
+.auth-box {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  width: 320px;
+  margin: auto;
+  margin-top: 100px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.auth-box h2 {
+  margin-bottom: 20px;
+  color: #1d976c;
+}
+
+.auth-box input {
+  width: 100%;
+  margin: 10px 0;
+}
+
+.auth-box button {
+  width: 100%;
+}
+
+.auth-box p {
+  margin-top: 15px;
+  color: #1d976c;
+  cursor: pointer;
+}
+
+.auth-box p:hover {
+  text-decoration: underline;
+}
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+  .card {
+    width: 90%;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  header h1 {
+    font-size: 24px;
+  }
+}
+/* DARK MODE */
+.dark {
+  background: #111;
+}
+
+.dark header {
+  color: #fff;
+}
+
+.dark .card,
+.dark .auth-box {
+  background: #1e1e1e;
+  color: white;
+}
+
+.dark input {
+  background: #333;
+  color: white;
+  border: 1px solid #555;
+}
+
+.dark button {
+  background: #333;
+  color: white;
+}
+
+.dark .result {
+  color: #00ffcc;
+}

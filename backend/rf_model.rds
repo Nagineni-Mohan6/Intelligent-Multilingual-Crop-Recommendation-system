@@ -1,0 +1,55 @@
+install.packages(c("randomForest", "caret", "tidyverse", "MLmetrics", "e1071", "ggplot2"))
+library(randomForest)
+library(caret)
+library(tidyverse)
+library(MLmetrics)
+library(e1071)
+library(ggplot2)
+
+df <- read_csv("E:/crop-recommendation-web/Crop_recommendation.csv")
+df$label <- as.factor(df$label)
+df <- df %>% mutate(across(where(is.character), as.factor)) %>% drop_na()
+
+set.seed(123)
+trainIndex <- createDataPartition(df$label, p = 0.7, list = FALSE)
+train <- df[trainIndex, ]
+test  <- df[-trainIndex, ]
+
+preProc <- preProcess(train[, -ncol(train)], method = c("center", "scale"))
+train_scaled <- predict(preProc, train[, -ncol(train)])
+train_scaled$label <- train$label
+test_scaled <- predict(preProc, test[, -ncol(test)])
+test_scaled$label <- test$label
+
+set.seed(123)
+rf_model <- randomForest(label ~ ., data = train_scaled,
+                         ntree = 1000,
+                         mtry = floor(sqrt(ncol(train_scaled) - 1)),
+                         importance = TRUE)
+
+pred <- predict(rf_model, test_scaled)
+
+conf_matrix <- confusionMatrix(pred, test_scaled$label)
+print(conf_matrix)
+cat("Model Accuracy:", round(conf_matrix$overall['Accuracy']*100,2), "%\n")
+
+precision <- Precision(y_pred = pred, y_true = test_scaled$label, positive = NULL)
+recall    <- Recall(y_pred = pred, y_true = test_scaled$label, positive = NULL)
+f1_score  <- F1_Score(y_pred = pred, y_true = test_scaled$label, positive = NULL)
+
+cat("Precision:", round(precision*100,2), "%\n")
+cat("Recall:", round(recall*100,2), "%\n")
+cat("F1 Score:", round(f1_score*100,2), "%\n")
+
+imp <- importance(rf_model)
+varImpPlot(rf_model)
+
+imp_df <- data.frame(Feature = rownames(imp), Importance = imp[,1])
+imp_df <- imp_df %>% arrange(desc(Importance))
+ggplot(imp_df, aes(x = reorder(Feature, Importance), y = Importance, fill = Importance)) +
+  geom_bar(stat="identity") +
+  coord_flip() +
+  labs(title = "Random Forest Feature Importance", x = "Feature", y = "Importance") +
+  theme_minimal()
+
+saveRDS(rf_model, "rf_model.rds")
