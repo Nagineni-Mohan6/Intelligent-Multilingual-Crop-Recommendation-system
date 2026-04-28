@@ -4,28 +4,38 @@
   <title>Crop Recommendation</title>
   <link rel="stylesheet" href="./style.css">
 </head>
+
 <body>
 
 <header>
   <div class="header-content">
+
     <div class="header-text">
-      <h1>🌱 Smart Crop Recommendation</h1>
-      <p>AI-powered solution for farmers</p>
+      <h1 id="title">🌱 Smart Crop Recommendation</h1>
+      <p id="subtitle">AI-powered solution for farmers</p>
     </div>
 
     <div class="top-bar">
-  <span id="welcomeUser"></span>
-  <button onclick="toggleDark()">🌙</button> <!-- ✅ ADD HERE -->
-  <button onclick="logout()">Logout</button>
-</div>
+      <span id="welcomeUser"></span>
+
+      <!-- 🌍 LANGUAGE BUTTONS -->
+      <button onclick="setLanguage('en')">EN</button>
+      <button onclick="setLanguage('hi')">HI</button>
+      <button onclick="setLanguage('te')">TE</button>
+
+      <button onclick="toggleDark()">🌙</button>
+
+      <button id="logoutBtn" onclick="logout()">Logout</button>
+    </div>
 
   </div>
 </header>
 
 <div class="container">
   <div class="card">
-    
+
     <form id="cropForm">
+
       <div class="grid">
         <input id="N" placeholder="Nitrogen" required>
         <input id="P" placeholder="Phosphorus" required>
@@ -35,12 +45,18 @@
         <input id="ph" step="0.01" placeholder="pH" required>
         <input id="rainfall" placeholder="Rainfall" required>
       </div>
-        <button type="button" onclick="getWeather()">📍 Use My Location</button>
-      <button type="submit">🌾 Predict Crop</button>
+
+      <button type="button" id="weatherBtn" onclick="getWeather()">
+        📍 Use My Location
+      </button>
+
+      <button type="submit" id="predictBtn">
+        🌾 Predict Crop
+      </button>
+
     </form>
 
     <div id="result" class="result"></div>
-    
 
   </div>
 </div>
@@ -50,5 +66,6 @@
 </footer>
 
 <script src="script.js"></script>
+
 </body>
 </html>
