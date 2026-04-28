@@ -1,12 +1,96 @@
 const API = "https://mohan678.pythonanywhere.com";
 
 
+// ================== LANGUAGE SYSTEM ==================
+const translations = {
+    en: {
+        title: "Smart Crop Recommendation",
+        subtitle: "AI-powered solution for farmers",
+        predict: "Predict Crop",
+        result: "Recommended Crop",
+        login: "Login",
+        register: "Register",
+        logout: "Logout",
+        weather: "Use My Location"
+    },
+
+    hi: {
+        title: "स्मार्ट फसल सिफारिश",
+        subtitle: "किसानों के लिए AI समाधान",
+        predict: "फसल अनुमान लगाएं",
+        result: "अनुशंसित फसल",
+        login: "लॉगिन",
+        register: "रजिस्टर",
+        logout: "लॉगआउट",
+        weather: "मेरा स्थान उपयोग करें"
+    },
+
+    te: {
+        title: "స్మార్ట్ పంట సిఫార్సు",
+        subtitle: "రైతుల కోసం AI పరిష్కారం",
+        predict: "పంట అంచనా వేయండి",
+        result: "సిఫార్సు చేసిన పంట",
+        login: "లాగిన్",
+        register: "నమోదు",
+        logout: "లాగ్అవుట్",
+        weather: "నా స్థానం ఉపయోగించండి"
+    }
+};
+
+
+// Apply language
+function applyLanguage() {
+    const lang = localStorage.getItem("lang") || "en";
+    const t = translations[lang];
+
+    if (document.getElementById("title"))
+        document.getElementById("title").innerText = t.title;
+
+    if (document.getElementById("subtitle"))
+        document.getElementById("subtitle").innerText = t.subtitle;
+
+    if (document.getElementById("predictBtn"))
+        document.getElementById("predictBtn").innerText = t.predict;
+
+    if (document.getElementById("logoutBtn"))
+        document.getElementById("logoutBtn").innerText = t.logout;
+
+    if (document.getElementById("weatherBtn"))
+        document.getElementById("weatherBtn").innerText = t.weather;
+}
+
+
+// Change language
+function setLanguage(lang) {
+    localStorage.setItem("lang", lang);
+    applyLanguage();
+}
+
+
+// ================== SESSION CHECK ==================
+window.onload = function () {
+    applyLanguage();
+
+    const isLoggedIn = localStorage.getItem("loggedIn");
+
+    if (!isLoggedIn && window.location.pathname.includes("index.html")) {
+        window.location.href = "login.html";
+    }
+
+    const user = localStorage.getItem("username");
+    const welcome = document.getElementById("welcomeUser");
+
+    if (user && welcome) {
+        welcome.innerText = "Welcome, " + user;
+    }
+};
+
+
 // ================== PREDICTION ==================
 const form = document.getElementById("cropForm");
 
-
-if(form){
-    form.addEventListener("submit", async function(e) {
+if (form) {
+    form.addEventListener("submit", async function (e) {
         e.preventDefault();
 
         const data = {
@@ -24,14 +108,19 @@ if(form){
         try {
             const response = await fetch(API + "/predict", {
                 method: "POST",
-                headers: {"Content-Type": "application/json"},
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data)
             });
 
             const result = await response.json();
 
-            document.getElementById("result").innerText =
-                "🌾 Recommended Crop: " + result.recommended_crop;
+            if (result.recommended_crop) {
+                document.getElementById("result").innerText =
+                    "🌾 Recommended Crop: " + result.recommended_crop;
+            } else {
+                document.getElementById("result").innerText =
+                    "❌ Error: " + result.error;
+            }
 
         } catch (error) {
             document.getElementById("result").innerText = "❌ Server error";
@@ -41,98 +130,108 @@ if(form){
 
 
 // ================== REGISTER ==================
-async function register(){
-    const res = await fetch(API + "/register", {
-        method: "POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({
-            username: document.getElementById("username").value,
-            password: document.getElementById("password").value
-        })
-    });
+async function register() {
+    try {
+        const res = await fetch(API + "/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                username: document.getElementById("username").value,
+                password: document.getElementById("password").value
+            })
+        });
 
-    const data = await res.json();
-    alert(data.message);
-    window.location.href = "login.html";
+        const data = await res.json();
+        alert(data.message);
+
+        window.location.href = "login.html";
+
+    } catch (err) {
+        alert("Server error");
+    }
 }
 
-// ================= SESSION CHECK =================
-
-// Run when page loads
-window.onload = function () {
-
-    const isLoggedIn = localStorage.getItem("loggedIn");
-
-    // 🔐 Protect page
-    if (!isLoggedIn && window.location.pathname.includes("index.html")) {
-        window.location.href = "login.html";
-    }
-
-    // 👤 Show username
-    const user = localStorage.getItem("username");
-    const welcome = document.getElementById("welcomeUser");
-
-    if(user && welcome){
-        welcome.innerText = "Welcome, " + user;
-    }
-};
 
 // ================== LOGIN ==================
-async function login(){
+async function login() {
     const usernameVal = document.getElementById("username").value;
 
-    const res = await fetch(API + "/login", {
-        method: "POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({
-            username: usernameVal,
-            password: document.getElementById("password").value
-        })
-    });
+    try {
+        const res = await fetch(API + "/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                username: usernameVal,
+                password: document.getElementById("password").value
+            })
+        });
 
-    const data = await res.json();
+        const data = await res.json();
 
-    if(data.status === "success"){
-        localStorage.setItem("loggedIn", "true");
-        localStorage.setItem("username", usernameVal); // ✅ SAVE USER
+        if (data.status === "success") {
+            localStorage.setItem("loggedIn", "true");
+            localStorage.setItem("username", usernameVal);
 
-        window.location.href = "index.html";
-    } else {
-        alert("Invalid credentials");
+            window.location.href = "index.html";
+        } else {
+            alert("Invalid credentials");
+        }
+
+    } catch (err) {
+        alert("Server not reachable");
     }
 }
-// ================== LOGOUT ==================
-function logout(){
-    localStorage.removeItem("loggedIn"); // clear login
-    window.location.href = "login.html";
-}
-// ================= FORGOT PASSWORD =================
-async function resetPassword(){
-    const res = await fetch(API + "/forgot", {
-        method: "POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({
-            username: document.getElementById("username").value,
-            new_password: document.getElementById("new_password").value
-        })
-    });
 
-    const data = await res.json();
-    alert(data.message);
+
+// ================== LOGOUT ==================
+function logout() {
+    localStorage.removeItem("loggedIn");
+    localStorage.removeItem("username");
     window.location.href = "login.html";
 }
+
+
+// ================= FORGOT PASSWORD =================
+async function resetPassword() {
+    try {
+        const res = await fetch(API + "/forgot", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                username: document.getElementById("username").value,
+                new_password: document.getElementById("new_password").value
+            })
+        });
+
+        const data = await res.json();
+        alert(data.message);
+
+        window.location.href = "login.html";
+
+    } catch (err) {
+        alert("Server error");
+    }
+}
+
+
+// ================== DARK MODE ==================
+function toggleDark() {
+    document.body.classList.toggle("dark");
+}
+
+
 // ================== NAVIGATION ==================
-function goToRegister(){
+function goToRegister() {
     window.location.href = "register.html";
 }
 
-function goToLogin(){
+function goToLogin() {
     window.location.href = "login.html";
 }
-function toggleDark(){
-    document.body.classList.toggle("dark");
-}
-async function getWeather(){
+
+
+// ================== WEATHER API ==================
+async function getWeather() {
     if (!navigator.geolocation) {
         alert("Geolocation not supported");
         return;
@@ -149,10 +248,8 @@ async function getWeather(){
 
             const data = await res.json();
 
-            console.log(data); // 🔥 DEBUG
-
-            if(data.cod !== 200){
-                alert("API Error: " + data.message);
+            if (data.cod !== 200) {
+                alert("Weather API Error");
                 return;
             }
 
@@ -160,11 +257,10 @@ async function getWeather(){
             document.getElementById("humidity").value = data.main.humidity;
 
         } catch (err) {
-            console.error(err);
-            alert("❌ Error fetching weather");
+            alert("Weather fetch error");
         }
 
-    }, (error) => {
+    }, () => {
         alert("Location permission denied");
     });
 }
