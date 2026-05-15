@@ -68,9 +68,8 @@ function setLanguage(lang) {
 
 
 // ================== SESSION CHECK ==================
-document.addEventListener("DOMContentLoaded", function () {
+window.onload = function () {
     applyLanguage();
-});
 
     const isLoggedIn = localStorage.getItem("loggedIn");
 
